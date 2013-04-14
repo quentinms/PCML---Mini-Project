@@ -1,7 +1,6 @@
-import numpy as np
 import scipy as sp
 import scipy.io as spio
-from matplotlib import pyplot as plt
+#from matplotlib import pyplot as plt
 
 class Data:
 
@@ -14,19 +13,21 @@ class Data:
 		print "Importing", self.fileName+"...",
 
 		size=tmp['train_cat_s'].shape[1]
-		
-		## TODO Randomize split
+
+		#Randomize indices
+		train_set_indices=sp.random.choice(size, (2*size/3), False)
+		complete_set_indices=sp.arange(size)
+		val_set_indices=sp.setdiff1d(complete_set_indices,train_set_indices);
 
 		#Training Data
-		self.train_cat=tmp['train_cat_s'][:,:(2*size/3)]
-		self.train_left=tmp['train_left_s'][:,:(2*size/3)]
-		self.train_right=tmp['train_right_s'][:,:(2*size/3)]
-
+		self.train_cat=tmp['train_cat_s'][:,train_set_indices]
+		self.train_left=tmp['train_left_s'][:,train_set_indices]
+		self.train_right=tmp['train_right_s'][:,train_set_indices]
 
 		#Validation Data
-		self.val_cat=tmp['train_cat_s'][:,(2*size/3):]
-		self.val_left=tmp['train_left_s'][:,(2*size/3):]
-		self.val_right=tmp['train_right_s'][:,(2*size/3):]
+		self.val_cat=tmp['train_cat_s'][:,val_set_indices]
+		self.val_left=tmp['train_left_s'][:,val_set_indices]
+		self.val_right=tmp['train_right_s'][:,val_set_indices]
 
 		#Test Data
 		self.test_cat=tmp['test_left_s']
