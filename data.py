@@ -43,18 +43,22 @@ class Data:
 	def normalizeData(self, data):
 
 		norm_data = sp.zeros((data.shape))
+		self.data_mean = sp.zeros(data.shape[0])
+		self.data_var = sp.zeros(data.shape[0])
 
-		for i in range(data.shape[1]):
-			image = data[:,i]
+		for i in range(data.shape[0]):
+			pixel_i = data[i,:]
 
-			mean = sp.mean(image)
-			var = sp.std(image)
+			mean = sp.mean(pixel_i)
+			var = sp.std(pixel_i)
 
-			image = (image - mean)/var
+			pixel_i = (pixel_i - mean)/var
 		
 			## TODO Check with assistants if mean of -2.671474153e-16 instead of 0 is OK.
 
-			norm_data[:,i] = image
+			norm_data[i,:] = pixel_i
+			self.data_mean[i] = mean
+			self.data_var[i] = var
 
 		return norm_data
 
