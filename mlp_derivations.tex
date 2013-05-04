@@ -18,9 +18,9 @@ $$r^{(2)}_{LR} =r^{(3)} \frac{(w^{(3)})^T}{(e^{-a_L^{(2)}}+1)(e^{-a_R^{(2)}}+1)}
 
 \subsubsection*{L} 
 $$r^{(1)}_{L_q} = \frac{\partial E(w)}{\partial a^{(1)}_{Lq}} =\sum_{k} ( \frac{\partial E(w)}{\partial a^{(2)}_{L_k}} \frac{\partial a^{(2)}_{L_k}}{\partial a^{(1)}_{L_q}} + \frac{\partial E(w)}{\partial a^{(2)}_{R_k}} \frac{\partial a^{(2)}_{R_k}}{\partial a^{(1)}_{L_q}} +  \frac{\partial E(w)}{\partial a^{(2)}_{LR_k}} \frac{\partial a^{(2)}_{LR_k}}{\partial a^{(1)}_{L_q}} )$$
-$$= \sum_{k} r^{(2)} ( (w_{L_q}^{(2)})^T\cdot sech(a_{L_q,k}^{(1)}) + (w_{LR_q,k}^{(2)})^T\cdot sech(a_{L_q}^{(1)}) )$$
+$$= \sum_{k} r^{(2)} ( (w_{L_q}^{(2)})^T\cdot sech(a_{L_q,k}^{(1)}) + (w_{LR,k}^{(2)})^T\cdot sech(a_{L_q}^{(1)}) )$$
 
 \subsubsection*{R}
 $$r^{(1)}_{R_q} = \frac{\partial E(w)}{\partial a^{(1)}_{R_q}} =\sum_{k} ( \frac{\partial E(w)}{\partial a^{(2)}_{L_k}} \frac{\partial a^{(2)}_{L_k}}{\partial a^{(1)}_{R_q}} + \frac{\partial E(w)}{\partial a^{(2)}_{R_k}} \frac{\partial a^{(2)}_{R_k}}{\partial a^{(1)}_{R_q}} +  \frac{\partial E(w)}{\partial a^{(2)}_{LR_k}} \frac{\partial a^{(2)}_{LR_k}}{\partial a^{(1)}_{R_q}} )$$
-$$=\sum_{k}  r^{(2)} ( (w_{R_q}^{(2)})^T\cdot sech(a_{R_q,k}^{(1)}) + (w_{LR_q,k}^{(2)})^T\cdot sech(a_{R_q}^{(1)}) )$$
+$$=\sum_{k}  r^{(2)} ( (w_{R_q}^{(2)})^T\cdot sech(a_{R_q,k}^{(1)}) + (w_{LR,k}^{(2)})^T\cdot sech(a_{R_q}^{(1)}) )$$
 \end{document}
