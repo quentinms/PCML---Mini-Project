@@ -10,8 +10,21 @@ class Gradient:
 		"""
 		self.nu = nu
 		self.mu = mu
-		pass
+		self.delta_w_old = None
 
-	def descend(self):
-		pass
+	def descend(self, W, gradients):
+
+		if self.delta_w_old == None:
+			self.delta_w_old = sp.zeros(W.shape)
+
+
+		updateW(W, gradients)
+
+		
+	def updateW(w_old, gradients)
+			delta_w_new = -self.nu*(1-self.mu)*prime(w_new)+self.mu*self.delta_w_old
+			w_new = w_old + delta_w_new
+		self.delta_w_old = delta_w_new
+		return (w_new)
+ 
 
