@@ -2,5 +2,5 @@
 
 ## TODO
 
-* Import data
+* Gradient Descent
 * Everything else
