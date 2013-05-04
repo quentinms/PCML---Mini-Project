@@ -16,17 +16,11 @@ $$r^{(2)}_{R} =r^{(3)} \frac{(w^{(3)})^T \cdot a_{LR}^{(2)} \cdot e^{a_R^{(2)}+a
 \subsubsection*{LR}
 $$r^{(2)}_{LR} =r^{(3)} \frac{(w^{(3)})^T}{(e^{-a_L^{(2)}}+1)(e^{-a_R^{(2)}}+1)}$$
 
-\subsection*{R$^{(1)}$}
-$$ r^{(1)}_{q} = \frac{\partial E(w)}{\partial a^{(1)}_q} = \sum_{p\in\{L, R, LR\}} \frac{\partial E(w)}{\partial a_p^{(2)}}\frac{\partial a^{(2)}_p}{\partial a^{(1)}_q}  $$
-\subsubsection*{L}
-$$r^{(1)}_{L} = \sum_{i=1}^{H2} r^{(2)} ( (w_{L}^{(2)})^T\cdot sech(a_{L,i}^{(1)}) + (w_{LR,i}^{(2)})^T\cdot sech(a_{L}^{(1)}) ) $$
-
-\subsubsection*{R}
-$$r^{(1)}_{R} =  \sum_{i=1}^{H2}  r^{(2)} ( (w_{R}^{(2)})^T\cdot sech(a_{R,i}^{(1)}) + (w_{LR,i}^{(2)})^T\cdot sech(a_{R}^{(1)}) ) $$
-
 \subsubsection*{L} 
 $$r^{(1)}_{L_q} = \frac{\partial E(w)}{\partial a^{(1)}_{Lq}} =\sum_{k} ( \frac{\partial E(w)}{\partial a^{(2)}_{L_k}} \frac{\partial a^{(2)}_{L_k}}{\partial a^{(1)}_{L_q}} + \frac{\partial E(w)}{\partial a^{(2)}_{R_k}} \frac{\partial a^{(2)}_{R_k}}{\partial a^{(1)}_{L_q}} +  \frac{\partial E(w)}{\partial a^{(2)}_{LR_k}} \frac{\partial a^{(2)}_{LR_k}}{\partial a^{(1)}_{L_q}} )$$
+$$= \sum_{k} r^{(2)} ( (w_{L_q}^{(2)})^T\cdot sech(a_{L_q,k}^{(1)}) + (w_{LR_q,k}^{(2)})^T\cdot sech(a_{L_q}^{(1)}) )$$
 
 \subsubsection*{R}
 $$r^{(1)}_{R_q} = \frac{\partial E(w)}{\partial a^{(1)}_{R_q}} =\sum_{k} ( \frac{\partial E(w)}{\partial a^{(2)}_{L_k}} \frac{\partial a^{(2)}_{L_k}}{\partial a^{(1)}_{R_q}} + \frac{\partial E(w)}{\partial a^{(2)}_{R_k}} \frac{\partial a^{(2)}_{R_k}}{\partial a^{(1)}_{R_q}} +  \frac{\partial E(w)}{\partial a^{(2)}_{LR_k}} \frac{\partial a^{(2)}_{LR_k}}{\partial a^{(1)}_{R_q}} )$$
+$$=\sum_{k}  r^{(2)} ( (w_{R_q}^{(2)})^T\cdot sech(a_{R_q,k}^{(1)}) + (w_{LR_q,k}^{(2)})^T\cdot sech(a_{R_q}^{(1)}) )$$
 \end{document}
