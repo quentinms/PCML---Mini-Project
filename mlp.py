@@ -17,9 +17,8 @@ class MLP:
 		self.w3 = sp.random.normal(0, 1.0/H2, (1, H2+1))
 		
 	def forward_pass(self, xL, xR):
-			
 		# First Layer
-		bs = sp.ones((1,xL.shape[1]), dtype=float)
+		bs = sp.ones((1,xL.shape[0]), dtype=float)
 		
 		xLb = sp.vstack([xL, bs])
 		xRb = sp.vstack([xR, bs])
@@ -45,7 +44,6 @@ class MLP:
 		z2b = sp.vstack([z2, bs])
 		
 		a3 = sp.dot(self.w3, z2b)
-		pprint(a3, width=1500)
 		return a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b
 		
 	def backward_pass(self, a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xL, xR, t):
@@ -55,8 +53,6 @@ class MLP:
 	 	grad3=sp.dot(r3,z2b.T);
 	 	
 	 	# Second Layer
-	 	
-	 	# !!!!!! CHECK BACKPROPAGATION EQUATIONS
 	 	r3w3T = sp.dot(self.w3[:,:-1].T, r3)
 
 	 	r2L=r3w3T*self.sigmoid(a2R)*self.divsigmoid(a2L)
@@ -68,7 +64,6 @@ class MLP:
 	 	grad2R = sp.dot(r2R, z1Rb.T)
 	 	
 	 	# First Layer
-	 	# !!!!!!!!!! Changer les indices
 	 	r1L = sp.power(1.0/sp.cosh(a1L),2)*(sp.dot(self.w2l[:,:-1].T, r2L)+sp.dot(self.w2lr[:,:self.H1].T, r2LR))
 	 	r1R = sp.power(1.0/sp.cosh(a1R),2)*(sp.dot(self.w2r[:,:-1].T, r2R)+sp.dot(self.w2lr[:,self.H1:-1].T, r2LR))
 	 	
