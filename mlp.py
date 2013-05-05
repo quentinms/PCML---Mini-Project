@@ -45,7 +45,7 @@ class MLP:
 		z2b = sp.vstack([z2, bs])
 		
 		a3 = sp.dot(self.w3, z2b)
-		
+		pprint(a3, width=1500)
 		return a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b
 		
 	def backward_pass(self, a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xL, xR, t):
@@ -79,9 +79,9 @@ class MLP:
 	 	
 	 	
 	def sigmoid(self, x) : 
-		return 1/(1+sp.exp(-x))
+		return 1.0/(1.0+sp.exp(-x))
 	def divsigmoid(self, x) :
-		return sp.exp(-x)/sp.power((1+sp.exp(-x)),2)
+		return sp.exp(-x)/sp.power((1.0+sp.exp(-x)),2)
 	
 	
 	 	
