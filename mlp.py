@@ -4,7 +4,7 @@ from pprint import pprint
 
 class MLP:
 
-	def __init__(self, H1, H2, dimension):
+	def __init__(self, H1, H2, dimension, nu, mu):
 		self.H1 = H1
 		self.H2 = H2
 		self.dimension = dimension
@@ -16,9 +16,25 @@ class MLP:
 		self.w2r = sp.random.normal(0, 1.0/H1, (H2, H1+1))
 		self.w3 = sp.random.normal(0, 1.0/H2, (1, H2+1))
 		
+		"""
+		nu: learning rate
+		mu: momentum
+		"""
+		self.nu = nu
+		self.mu = mu
+
+		#
+		self.delta_w1l_old = sp.zeros(self.w1l.shape)
+		self.delta_w1r_old = sp.zeros(self.w1r.shape)
+		self.delta_w2l_old = sp.zeros(self.w2l.shape)
+		self.delta_w2r_old = sp.zeros(self.w2r.shape)
+		self.delta_w2lr_old = sp.zeros(self.w2lr.shape)
+		self.delta_w3_old = sp.zeros(self.w3.shape)
+
+		
 	def forward_pass(self, xL, xR):
 		# First Layer
-		bs = sp.ones((1,xL.shape[0]), dtype=float)
+		bs = sp.ones((1,xL.shape[1]), dtype=float)
 		
 		xLb = sp.vstack([xL, bs])
 		xRb = sp.vstack([xR, bs])
@@ -42,16 +58,15 @@ class MLP:
 		
 		# Third Layer
 		z2b = sp.vstack([z2, bs])
-		
 		a3 = sp.dot(self.w3, z2b)
-		return a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b
+		return a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb
 		
-	def backward_pass(self, a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xL, xR, t):
+	def backward_pass(self, a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, t):
 	 	
 	 	# Third Layer
 	 	r3=	-t*self.sigmoid(-t*a3)
 	 	grad3=sp.dot(r3,z2b.T);
-	 	
+	 	pprint(grad3)
 	 	# Second Layer
 	 	r3w3T = sp.dot(self.w3[:,:-1].T, r3)
 
@@ -67,11 +82,30 @@ class MLP:
 	 	r1L = sp.power(1.0/sp.cosh(a1L),2)*(sp.dot(self.w2l[:,:-1].T, r2L)+sp.dot(self.w2lr[:,:self.H1].T, r2LR))
 	 	r1R = sp.power(1.0/sp.cosh(a1R),2)*(sp.dot(self.w2r[:,:-1].T, r2R)+sp.dot(self.w2lr[:,self.H1:-1].T, r2LR))
 	 	
-	 	grad1L = sp.dot(r1L, xL.T)
-		grad1R = sp.dot(r1R, xR.T)
+	 	grad1L = sp.dot(r1L, xLb.T)
+		grad1R = sp.dot(r1R, xRb.T)
+		
 		
 		return grad3, grad2L, grad2LR, grad2R, grad1L, grad1R
-	 	
+
+	def descend(self, xL, xR):
+	
+		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(xL, xR)
+		grad3, grad2L, grad2LR, grad2R, grad1L, grad1R = self.backward_pass(a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, 1);
+
+		new_w1l, self.delta_w1l_old = self.updateW(self.w1l, grad1L, self.delta_w1l_old)
+		new_w1r, self.delta_w1r_old = self.updateW(self.w1r, grad1R, self.delta_w1r_old)
+		new_w2l, self.delta_w2l_old = self.updateW(self.w2l, grad2L, self.delta_w2l_old) 
+		new_w2r, self.delta_w2r_old = self.updateW(self.w2r, grad2R, self.delta_w2r_old ) 
+		new_w2lr, self.delta_w2lr_old = self.updateW(self.w2lr, grad2LR, self.delta_w2lr_old)
+		new_w3, self.delta_w3_old = self.updateW(self.w3, grad3, self.delta_w3_old)
+
+		return new_w1l, new_w1r, new_w2l, new_w2r, new_w2lr, new_w3
+
+	def updateW(self, w_old, gradients, delta_w_old):
+		delta_w_new = -self.nu*(1-self.mu)*gradients+self.mu*delta_w_old
+		w_new = w_old + delta_w_new
+		return w_new, delta_w_new
 	 	
 	def sigmoid(self, x) : 
 		return 1.0/(1.0+sp.exp(-x))
