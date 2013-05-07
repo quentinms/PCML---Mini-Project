@@ -40,7 +40,7 @@ class Data:
 		#plt.imshow(sp.reshape(test_left_s[:,30],(24,24)))
 		#plt.show()
 
-	def normalizeData(self, data):
+	def normalizeTrainingData(self, data):
 
 		norm_data = sp.zeros((data.shape))
 		self.data_mean = sp.zeros(data.shape[0])
@@ -62,11 +62,22 @@ class Data:
 
 		return norm_data
 
-	def normalizeDataset(self):
+	def normalizeDataset(self, data):
+
+		for i in range(data.shape[1]):
+			data[:,i]=(data[:,i]-self.data_mean)/self.data_var
+
+		return data
+
+	def normalize(self):
 
 		print "Normalizing training set...",
-		self.train_left = self.normalizeData(self.train_left)
-		self.train_right = self.normalizeData(self.train_right)
+		self.train_left = self.normalizeTrainingData(self.train_left)
+		self.train_right = self.normalizeTrainingData(self.train_right)
+
+		print "Normalizing validation set...",
+		self.val_left = self.normalizeDataset(self.val_left)
+		self.val_right = self.normalizeDataset(self.val_right)
 		print "OK"
 
 
