@@ -1,10 +1,12 @@
 import scipy as sp
-import numpy as np
-from pprint import pprint 
+#from data import Data
+#from pprint import pprint 
 
 class MLP:
 
-	def __init__(self, H1, H2, dimension, nu, mu):
+	def __init__(self, H1, H2, dimension, nu, mu, data):
+		self.data = data
+
 		self.H1 = H1
 		self.H2 = H2
 		self.dimension = dimension
@@ -63,7 +65,8 @@ class MLP:
 		z2b = sp.vstack([z2, bs])
 		a3 = sp.dot(self.w3, z2b)
 
-		pprint(a3)
+		#pprint(a3)
+		#pprint(self.data.val_cat)
 		return a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb
 		
 	def backward_pass(self, a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, t):
@@ -107,14 +110,24 @@ class MLP:
 			self.w2lr, self.delta_w2lr_old = self.updateW(self.w2lr, grad2LR, self.delta_w2lr_old)
 			self.w3, self.delta_w3_old = self.updateW(self.w3, grad3, self.delta_w3_old)
 
-			#if i%100==0 :
-			print a3, t[:,i]
+			if i%100==0 :
+				print a3[0,0], t[0,i]
 			#pprint(self.w3)
 	def updateW(self, w_old, gradients, delta_w_old):
 		delta_w_new = -self.nu*(1-self.mu)*gradients+self.mu*delta_w_old
 		w_new = w_old + delta_w_new
 		#w_new = w_old - self.mu * gradients
 		return w_new, delta_w_new
+
+
+	def train(self):
+		self.descend(self.data.train_left, self.data.train_right,self.data.train_cat-2)
+
+	def classify(self):
+		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
+		for i in range(a3.shape[1]):
+			if i % 100 == 0:
+				print a3[0,i], (self.data.val_cat[0,i]-2)
 	 	
 	def sigmoid(self, x) : 
 		return 1.0/(1.0+sp.exp(-x))

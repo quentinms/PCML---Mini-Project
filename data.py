@@ -20,19 +20,19 @@ class Data:
 		val_set_indices=sp.setdiff1d(complete_set_indices,train_set_indices);
 
 		#Training Data
-		self.train_cat=tmp['train_cat_s'][:,train_set_indices]
-		self.train_left=tmp['train_left_s'][:,train_set_indices]
-		self.train_right=tmp['train_right_s'][:,train_set_indices]
+		self.train_cat=sp.array(tmp['train_cat_s'][:,train_set_indices], dtype='int8')
+		self.train_left=sp.array(tmp['train_left_s'][:,train_set_indices],dtype=float)
+		self.train_right=sp.array(tmp['train_right_s'][:,train_set_indices],dtype=float)
 
 		#Validation Data
-		self.val_cat=tmp['train_cat_s'][:,val_set_indices]
-		self.val_left=tmp['train_left_s'][:,val_set_indices]
-		self.val_right=tmp['train_right_s'][:,val_set_indices]
+		self.val_cat=sp.array(tmp['train_cat_s'][:,val_set_indices], dtype='int8')
+		self.val_left=sp.array(tmp['train_left_s'][:,val_set_indices],dtype=float)
+		self.val_right=sp.array(tmp['train_right_s'][:,val_set_indices],dtype=float)
 
 		#Test Data
-		self.test_cat=tmp['test_left_s']
-		self.test_left=tmp['test_left_s']
-		self.test_right=tmp['test_right_s']
+		self.test_cat=sp.array(tmp['test_left_s'], dtype='int8')
+		self.test_left=sp.array(tmp['test_left_s'], dtype=float)
+		self.test_right=sp.array(tmp['test_right_s'], dtype=float)
 
 		print "OK"
 				
@@ -66,7 +66,6 @@ class Data:
 
 		for i in range(data.shape[1]):
 			data[:,i]=(data[:,i]-self.data_mean)/self.data_var
-
 		return data
 
 	def normalize(self):
@@ -79,6 +78,5 @@ class Data:
 		self.val_left = self.normalizeDataset(self.val_left)
 		self.val_right = self.normalizeDataset(self.val_right)
 		print "OK"
-
 
 
