@@ -73,10 +73,21 @@ class Data:
 		print "Normalizing training set...",
 		self.train_left = self.normalizeTrainingData(self.train_left)
 		self.train_right = self.normalizeTrainingData(self.train_right)
+		print "OK"
 
 		print "Normalizing validation set...",
 		self.val_left = self.normalizeDataset(self.val_left)
 		self.val_right = self.normalizeDataset(self.val_right)
 		print "OK"
 
+	def shuffleData(self):
 
+		print "Shuffling training set...",
+		data_length = self.train_cat.shape[1]
+		rand_index = sp.random.permutation(data_length)
+
+		self.train_cat = self.train_cat[:,rand_index]
+		self.train_left = self.train_left[:,rand_index]
+		self.train_right = self.train_right[:,rand_index]
+		print "OK"
+		
