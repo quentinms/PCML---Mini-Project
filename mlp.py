@@ -102,6 +102,7 @@ class MLP:
 
 	def descend(self, xL, xR, t):
 		
+		res = sp.zeros((1, xL.shape[1]))
 
 		for i in range(1,xL.shape[1]) :
 			a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(sp.array([xL[:,i]]).T, sp.array([xR[:,i]]).T)
@@ -114,6 +115,10 @@ class MLP:
 			self.w2lr, self.delta_w2lr_old = self.updateW(self.w2lr, grad2LR, self.delta_w2lr_old)
 			self.w3, self.delta_w3_old = self.updateW(self.w3, grad3, self.delta_w3_old)
 
+			res[0,i] = a3
+
+		return res
+
 	def updateW(self, w_old, gradients, delta_w_old):
 		delta_w_new = -self.nu*(1-self.mu)*gradients+self.mu*delta_w_old
 		w_new = w_old + delta_w_new
@@ -124,7 +129,8 @@ class MLP:
 
 
 	def train(self):
-		self.descend(self.data.train_left, self.data.train_right,self.data.train_cat)
+		res = self.descend(self.data.train_left, self.data.train_right,self.data.train_cat)
+		return res
 
 	def classify(self):
 		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
