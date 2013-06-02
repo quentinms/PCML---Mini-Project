@@ -10,7 +10,7 @@ def main():
 	data.importDataFromMat()
 	data.normalize()
 	data.shuffleData()
-	mlp = MLP(20,50,576, 0.001, 0.1, data)
+	mlp = MLP(20,50,576, 0.001, 0.1, 2, data)
 	error = Error()
 	
 	
@@ -34,7 +34,7 @@ def main():
 		training_error[i], misclassified_train[i] = error.total_error(results_train, data.train_cat, 2)
 		
 		print "Epoch #"+str(i)+" Number of misclassified: "+str(misclassified_val[i])+" - Logistic error: "+str(validation_error[i])
-		training_error2[i], _ = error.total_error(results_train2, data.train_cat)
+		training_error2[i], _ = error.total_error(results_train2, data.train_cat, 2)
 
 	plt.plot(validation_error, label='validation error')
 	#plt.plot(misclassified_val, label='misclassified')
@@ -44,7 +44,7 @@ def main():
 	plt.xlabel('epoch')
 	plt.legend()
 	plt.show()
-	mlp.test_gradient();	
+	#mlp.test_gradient();	
 	#pprint(sp.array(data.val_cat, dtype='int8')-2)
 
 main()

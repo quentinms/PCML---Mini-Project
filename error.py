@@ -17,9 +17,9 @@ class Error:
 		#Positive error
 		error += sp.sum(tmp[tmp>=0]+sp.log(1+sp.exp(tmp[tmp>=0])))
 		error /= result.shape[1]
-		if k==2
+		if k==2 :
 			misclassified = sp.sum(sp.absolute(sp.sign(result)-expected))/2
-		else
+		else :
 			misclassified = sp.sum(sp.argmax(result,axis=0)!=sp.argmax(expected,axis=1))
 
 

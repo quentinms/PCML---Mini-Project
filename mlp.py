@@ -11,15 +11,17 @@ class MLP:
 		self.H1 = H1
 		self.H2 = H2
 		self.dimension = dimension
+
+		self.k = k;
 		
 		self.w1l = sp.random.normal(0, 1.0/sp.sqrt(dimension), (H1, (dimension+1)))
 		self.w1r = sp.random.normal(0, 1.0/sp.sqrt(dimension), (H1, (dimension+1)))
 		self.w2l = sp.random.normal(0, 1.0/sp.sqrt(H1), (H2, H1+1))
 		self.w2lr = sp.random.normal(0, 1.0/sp.sqrt((2*H1)), (H2, (2*H1)+1))
 		self.w2r = sp.random.normal(0, 1.0/sp.sqrt(H1), (H2, H1+1))
-		if(slef.k==2)
+		if self.k==2 :
 			self.w3 = sp.random.normal(0, 1.0/sp.sqrt(H2), (1, H2+1))
-		else
+		else :
 			self.w3 = sp.random.normal(0, 1.0/sp.sqrt(H2), (self.k, H2+1))
 		"""
 		nu: learning rate
