@@ -4,8 +4,9 @@ import scipy.io as spio
 
 class Data:
 
-	def __init__(self, fileName):
+	def __init__(self, fileName, isBinary):
 		self.fileName = fileName
+		self.isBinary = isBinary
 
 	def importDataFromMat(self):
 		tmp = spio.loadmat(self.fileName)
@@ -79,6 +80,17 @@ class Data:
 		self.val_left = self.normalizeDataset(self.val_left)
 		self.val_right = self.normalizeDataset(self.val_right)
 		print "OK"
+
+		if self.isBinary:
+
+			print "Normalizing categories' labels...",
+			categories = sp.unique(self.train_cat)
+			self.train_cat[self.train_cat == categories[0]] = -1
+			self.train_cat[self.train_cat == categories[1]] = 1
+			self.val_cat[self.val_cat == categories[0]] = -1
+			self.val_cat[self.val_cat == categories[1]] = 1
+			print "OK"
+
 
 	def shuffleData(self):
 
