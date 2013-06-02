@@ -6,7 +6,7 @@ import scipy as sp
 #from pprint import pprint 
 
 def main():
-	data = Data('miniproject_data/norb_binary.mat', True)
+	data = Data('miniproject_data/norb_binary.mat', 2)
 	data.importDataFromMat()
 	data.normalize()
 	data.shuffleData()
