@@ -1,10 +1,11 @@
 import scipy as sp
 #from data import Data
 #from pprint import pprint 
+from error import Error
 
 class MLP:
 
-	def __init__(self, H1, H2, dimension, nu, mu, data):
+	def __init__(self, H1, H2, dimension, nu, mu, k, data):
 		self.data = data
 
 		self.H1 = H1
@@ -16,8 +17,10 @@ class MLP:
 		self.w2l = sp.random.normal(0, 1.0/sp.sqrt(H1), (H2, H1+1))
 		self.w2lr = sp.random.normal(0, 1.0/sp.sqrt((2*H1)), (H2, (2*H1)+1))
 		self.w2r = sp.random.normal(0, 1.0/sp.sqrt(H1), (H2, H1+1))
-		self.w3 = sp.random.normal(0, 1.0/sp.sqrt(H2), (1, H2+1))
-		
+		if(slef.k==2)
+			self.w3 = sp.random.normal(0, 1.0/sp.sqrt(H2), (1, H2+1))
+		else
+			self.w3 = sp.random.normal(0, 1.0/sp.sqrt(H2), (self.k, H2+1))
 		"""
 		nu: learning rate
 		mu: momentum
@@ -121,17 +124,48 @@ class MLP:
 
 
 	def train(self):
-		self.descend(self.data.train_left, self.data.train_right,self.data.train_cat-2)
+		self.descend(self.data.train_left, self.data.train_right,self.data.train_cat)
 
 	def classify(self):
 		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
 		#for i in range(a3.shape[1]):
 			#if i % 100 == 0:
-				#print a3[0,i], (self.data.val_cat[0,i]-2)
-
-		return a3
+				#print a3[0,i], (self.data.val_cat[0,i])
+		classif = sp.sign(a3);
+		classif = sp.argmax(a3,axis=0);
+		return a3, classif
 	 	
 	def sigmoid(self, x) : 
 		return 1.0/(1.0+sp.exp(-x))
 	def divsigmoid(self, x) :
 		return sp.exp(-x)/sp.power((1.0+sp.exp(-x)),2)
+
+	def test_gradient(self):
+		epsilon = 10**(-2)
+
+		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
+		grad3, grad2L, grad2LR, grad2R, grad1L, grad1R = self.backward_pass(a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, self.data.val_cat)
+		print "grad3 shape : "+str(grad3.shape)
+		print "w3 shape : "+str(self.w3.shape)
+		print "w3 initial = "+str(self.w3[0,1])
+		e=Error()
+		self.w1l[0,8] += epsilon
+		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
+		e_plus = e.total_error(a3,self.data.val_cat)[0]
+		print "E+ = "+str(e_plus)
+		self.w1l[0,8] -= (2*epsilon)
+		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
+		e_minus = e.total_error(a3,self.data.val_cat)[0]
+		print "E- = "+str(e_minus)
+		self.w1l[0,8] += epsilon
+
+		difference = (e_plus-e_minus)
+		print 2*epsilon
+		approx_grad = difference/(2*epsilon)
+		grad=grad1L[0,8]
+
+		print "Derivative = "+str(approx_grad)
+		print "Gradient = "+str(grad1L[0,8])
+
+
+		print "Difference "+str(approx_grad-grad)

@@ -19,7 +19,7 @@ def main():
 	#mlp.descend(data.train_left[:,1:10], data.train_right[:,1:10],sp.array(data.train_cat[:,1:10], dtype='int8')-2)
 	
 
-	NUM_EPOCH = 10
+	NUM_EPOCH = 15
 
 	validation_error = sp.zeros(NUM_EPOCH)
 	misclassified_val = sp.zeros(NUM_EPOCH)
@@ -31,11 +31,11 @@ def main():
 		mlp.train()
 		a1L, a1R, a2L, a2LR, a2R, results_train, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = mlp.forward_pass(data.train_left, data.train_right)
 		#print "-"*30 + " Classifying #" +str(i)+ "-"*30
-		results_val = mlp.classify()
+		results_val, results_classif = mlp.classify()
 
 		#print "-"*30 + " Error " + "-"*30
-		validation_error[i], misclassified_val[i] = error.total_error(results_val, data.val_cat-2)
-		training_error[i], misclassified_train[i] = error.total_error(results_train, data.train_cat-2)
+		validation_error[i], misclassified_val[i] = error.total_error(results_val, data.val_cat, 2)
+		training_error[i], misclassified_train[i] = error.total_error(results_train, data.train_cat, 2)
 		
 		print "Epoch #"+str(i)+" Number of misclassified: "+str(misclassified_val[i])+" - Logistic error: "+str(validation_error[i])
 		#training_error[i] = error.total_error(results_train, data.train_cat)
@@ -47,7 +47,7 @@ def main():
 	plt.xlabel('epoch')
 	plt.legend()
 	plt.show()
-		
+	mlp.test_gradient();	
 	#pprint(sp.array(data.val_cat, dtype='int8')-2)
 
 main()
