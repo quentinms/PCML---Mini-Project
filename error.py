@@ -19,12 +19,12 @@ class Error:
 			error += sp.sum(sp.log1p(sp.exp(tmp[tmp<0])))
 			#Positive error
 			error += sp.sum(tmp[tmp>=0]+sp.log(1+sp.exp(tmp[tmp>=0])))
-			error /= result.shape[1]
 			misclassified = sp.sum(sp.absolute(sp.sign(result)-expected))/2
 		else :
 			error += 0.5*sp.sum(LA.norm(result-expected)**2)
-			error /= result.shape[1]	
 			misclassified = sp.sum(sp.argmax(result,axis=0)!=sp.argmax(expected, axis=0))
+		error /= result.shape[1]
+		misclassified /= result.shape[1]*1.0
 
 
 		return error, misclassified

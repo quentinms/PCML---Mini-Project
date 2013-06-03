@@ -4,14 +4,16 @@ import scipy.io as spio
 
 class Data:
 
-	def __init__(self, fileName, k):
-		self.fileName = fileName
+	def __init__(self, k):
 		self.k = k
 
 	def importDataFromMat(self):
-		tmp = spio.loadmat(self.fileName)
+		print "Importing data ...",
 
-		print "Importing", self.fileName+"...",
+		if self.k == 2 :
+			tmp = spio.loadmat('miniproject_data/norb_binary.mat')
+		else :
+			tmp = spio.loadmat('miniproject_data/norb_5class.mat')
 
 		size=tmp['train_cat_s'].shape[1]
 
@@ -54,8 +56,6 @@ class Data:
 			var = sp.std(pixel_i)
 
 			pixel_i = (pixel_i - mean)/var
-		
-			## TODO Check with assistants if mean of -2.671474153e-16 instead of 0 is OK.
 
 			norm_data[i,:] = pixel_i
 			self.data_mean[i] = mean
@@ -90,7 +90,6 @@ class Data:
 			self.val_cat[self.val_cat == categories[1]] = 1	
 
 		else :
-			"""
 			mat_val_cat = sp.zeros((self.k,self.val_cat.shape[1]))
 
 			for i in range(self.val_cat.shape[1]) :
@@ -103,23 +102,10 @@ class Data:
 				for j in range(self.k) :
 					if self.train_cat[0,i]==j :
 						mat_train_cat[j,i] = 1
-			"""
 
-			mat_val_cat = sp.zeros((self.k,self.val_cat.shape[1]))
-
-			for i in range(self.val_cat.shape[1]) :
-				for j in range(self.k) :
-					if self.val_cat[0,i]==j :
-						mat_val_cat[j,i] = 1
-
-			mat_train_cat = sp.zeros((self.k,self.train_cat.shape[1]))
-			for i in range(self.train_cat.shape[1]) :
-				for j in range(self.k) :
-					if self.train_cat[0,i]==j :
-						mat_train_cat[j,i] = 1
-						
 			self.val_cat = mat_val_cat
 			self.train_cat = mat_train_cat
+
 		print "OK"
 		
 

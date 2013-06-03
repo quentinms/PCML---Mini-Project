@@ -30,17 +30,13 @@ class MLP:
 		self.nu = nu
 		self.mu = mu
 
-		#
 		self.delta_w1l_old = sp.zeros(self.w1l.shape)
 		self.delta_w1r_old = sp.zeros(self.w1r.shape)
 		self.delta_w2l_old = sp.zeros(self.w2l.shape)
 		self.delta_w2r_old = sp.zeros(self.w2r.shape)
 		self.delta_w2lr_old = sp.zeros(self.w2lr.shape)
 		self.delta_w3_old = sp.zeros(self.w3.shape)
-		
-		
-
-		
+			
 	def forward_pass(self, xL, xR):
 
 		bs = sp.ones((1,xL.shape[1]), dtype=float)
@@ -54,7 +50,7 @@ class MLP:
 		
 		z1L = sp.tanh(a1L)
 		z1R = sp.tanh(a1R)
-		#pprint(a1R)
+
 		# Second Layer		
 		z1Lb = sp.vstack([z1L, bs])
 		z1LRb = sp.vstack([z1L, z1R, bs])
@@ -63,15 +59,13 @@ class MLP:
 		a2L = sp.dot(self.w2l, z1Lb)
 		a2LR = sp.dot(self.w2lr, z1LRb)
 		a2R = sp.dot(self.w2r, z1Rb)
-		#pprint(a2R)
+
 		z2 = a2LR*self.sigmoid(a2L)*self.sigmoid(a2R)
 
 		# Third Layer
 		z2b = sp.vstack([z2, bs])
 		a3 = sp.dot(self.w3, z2b)
 
-		#pprint(a3)
-		#pprint(self.data.val_cat)
 		return a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb
 		
 	def backward_pass(self, a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, t):
@@ -80,8 +74,6 @@ class MLP:
 		if self.k == 2 :
 			r3=	-t*self.sigmoid(-t*a3)
 		else :
-			#print a3
-			#print t.T
 			r3 = a3 - t.T
 
 		grad3=sp.dot(r3,z2b.T)
@@ -107,7 +99,7 @@ class MLP:
 		
 		return grad3, grad2L, grad2LR, grad2R, grad1L, grad1R
 
-	def descend(self, xL, xR, t):
+	def descent(self, xL, xR, t):
 		
 		if self.k==2 :
 			res = sp.zeros((1, xL.shape[1]))
@@ -135,24 +127,15 @@ class MLP:
 	def updateW(self, w_old, gradients, delta_w_old):
 		delta_w_new = -self.nu*(1-self.mu)*gradients+self.mu*delta_w_old
 		w_new = w_old + delta_w_new
-		#if w_new.all() == w_old.all():
-		#	print "Nope"
-		#w_new = w_old - self.mu * gradients
 		return w_new, delta_w_new
 
 
 	def train(self):
-		res = self.descend(self.data.train_left, self.data.train_right,self.data.train_cat)
+		res = self.descent(self.data.train_left, self.data.train_right,self.data.train_cat)
 		return res
 
 	def classify(self):
 		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
-		for i in range(a3.shape[1]):
-			if i % 10 == 0:
-				if self.k == 2 :
-					print sp.sign(a3[:,i]), (self.data.val_cat[0,i])
-				else :	
-					print sp.argmax(a3[:,i], axis=0), sp.argmax(self.data.val_cat[:,i])
 		if self.k == 2 :
 			classif = sp.sign(a3);
 		else :
