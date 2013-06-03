@@ -36,6 +36,8 @@ class TrainerValidator:
 			if i != 0 :
 				self.training_error[i-1], self.misclassified_train[i-1] = self.error.total_error(results_train, self.data.train_cat, self.k)
 
+		self.mlp.test_gradient()
+
 	def plotResults(self):
 		error_fig = plt.figure()
 		ax1 = error_fig.add_subplot(111)

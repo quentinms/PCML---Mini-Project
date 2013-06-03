@@ -74,7 +74,7 @@ class MLP:
 		if self.k == 2 :
 			r3=	-t*self.sigmoid(-t*a3)
 		else :
-			r3 = a3 - t.T
+			r3 = a3 - t
 
 		grad3=sp.dot(r3,z2b.T)
 		
@@ -108,7 +108,7 @@ class MLP:
 
 		for i in range(1,xL.shape[1]) :
 			a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(sp.array([xL[:,i]]).T, sp.array([xR[:,i]]).T)
-			grad3, grad2L, grad2LR, grad2R, grad1L, grad1R = self.backward_pass(a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, sp.array([t[:,i]]));
+			grad3, grad2L, grad2LR, grad2R, grad1L, grad1R = self.backward_pass(a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, sp.array([t[:,i]]).T);
 
 			self.w1l, self.delta_w1l_old = self.updateW(self.w1l, grad1L, self.delta_w1l_old)
 			self.w1r, self.delta_w1r_old = self.updateW(self.w1r, grad1R, self.delta_w1r_old)
@@ -148,21 +148,25 @@ class MLP:
 		return sp.exp(-x)/sp.power((1.0+sp.exp(-x)),2)
 
 	def test_gradient(self):
-		epsilon = 10**(-2)
+		epsilon = 10**(-8)
 
 		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
 		grad3, grad2L, grad2LR, grad2R, grad1L, grad1R = self.backward_pass(a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, self.data.val_cat)
+		expected_gradient = grad1L[0,8];
+
 		print "grad3 shape : "+str(grad3.shape)
 		print "w3 shape : "+str(self.w3.shape)
 		print "w3 initial = "+str(self.w3[0,1])
+
 		e=Error()
+
 		self.w1l[0,8] += epsilon
 		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
-		e_plus = e.total_error(a3,self.data.val_cat)[0]
+		e_plus = e.total_error(a3,self.data.val_cat, self.k)[0]
 		print "E+ = "+str(e_plus)
 		self.w1l[0,8] -= (2*epsilon)
 		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
-		e_minus = e.total_error(a3,self.data.val_cat)[0]
+		e_minus = e.total_error(a3,self.data.val_cat, self.k)[0]
 		print "E- = "+str(e_minus)
 		self.w1l[0,8] += epsilon
 
@@ -172,7 +176,7 @@ class MLP:
 		grad=grad1L[0,8]
 
 		print "Derivative = "+str(approx_grad)
-		print "Gradient = "+str(grad1L[0,8])
+		print "Gradient = "+str(expected_gradient)
 
 
 		print "Difference "+str(approx_grad-grad)
