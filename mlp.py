@@ -106,7 +106,7 @@ class MLP:
 		else :
 			res = sp.zeros((self.k, xL.shape[1]))
 
-		for i in range(1,xL.shape[1]) :
+		for i in range(xL.shape[1]) :
 			a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(sp.array([xL[:,i]]).T, sp.array([xR[:,i]]).T)
 			grad3, grad2L, grad2LR, grad2R, grad1L, grad1R = self.backward_pass(a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, sp.array([t[:,i]]).T);
 

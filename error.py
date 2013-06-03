@@ -20,6 +20,9 @@ class Error:
 			#Positive error
 			error += sp.sum(tmp[tmp>=0]+sp.log(1+sp.exp(tmp[tmp>=0])))
 			misclassified = sp.sum(sp.absolute(sp.sign(result)-expected))/2
+			print "Expected : "+str(expected.shape)
+			print "Result : "+str(result.shape)
+			print misclassified
 		else :
 			error += 0.5*sp.sum(LA.norm(result-expected)**2)
 			misclassified = sp.sum(sp.argmax(result,axis=0)!=sp.argmax(expected, axis=0))
