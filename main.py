@@ -5,16 +5,19 @@ import matplotlib.pyplot as plt
 import scipy as sp
 #from pprint import pprint 
 
+
 def main():
-	data = Data('miniproject_data/norb_binary.mat', 2)
+	
+	#data = Data('miniproject_data/norb_binary.mat', 2)
+	data = Data('miniproject_data/norb_5class.mat', 5)
 	data.importDataFromMat()
 	data.normalize()
 	data.shuffleData()
-	mlp = MLP(20,50,576, 0.001, 0.1, 2, data)
+	mlp = MLP(20,50,576, 0.001, 0.1, 5, data)
 	error = Error()
 	
-	
 	NUM_EPOCH = 10
+
 
 	validation_error = sp.zeros(NUM_EPOCH)
 	misclassified_val = sp.zeros(NUM_EPOCH)
@@ -30,11 +33,11 @@ def main():
 		results_val, results_classif = mlp.classify()
 
 		#print "-"*30 + " Error " + "-"*30
-		validation_error[i], misclassified_val[i] = error.total_error(results_val, data.val_cat, 2)
-		training_error[i], misclassified_train[i] = error.total_error(results_train, data.train_cat, 2)
+		validation_error[i], misclassified_val[i] = error.total_error(results_val, data.val_cat, 5)
+		training_error[i], misclassified_train[i] = error.total_error(results_train, data.train_cat, 5)
 		
 		print "Epoch #"+str(i)+" Number of misclassified: "+str(misclassified_val[i])+" - Logistic error: "+str(validation_error[i])
-		training_error2[i], _ = error.total_error(results_train2, data.train_cat, 2)
+		training_error2[i], _ = error.total_error(results_train2, data.train_cat, 5)
 
 	plt.plot(validation_error, label='validation error')
 	#plt.plot(misclassified_val, label='misclassified')

@@ -80,16 +80,48 @@ class Data:
 		self.val_left = self.normalizeDataset(self.val_left)
 		self.val_right = self.normalizeDataset(self.val_right)
 		print "OK"
+		print "Normalizing categories' labels...",
 
 		if self.k == 2:
-
-			print "Normalizing categories' labels...",
 			categories = sp.unique(self.train_cat)
 			self.train_cat[self.train_cat == categories[0]] = -1
 			self.train_cat[self.train_cat == categories[1]] = 1
 			self.val_cat[self.val_cat == categories[0]] = -1
-			self.val_cat[self.val_cat == categories[1]] = 1
-			print "OK"
+			self.val_cat[self.val_cat == categories[1]] = 1	
+
+		else :
+			"""
+			mat_val_cat = sp.zeros((self.k,self.val_cat.shape[1]))
+
+			for i in range(self.val_cat.shape[1]) :
+				for j in range(self.k) :
+					if self.val_cat[0,i]==j :
+						mat_val_cat[j,i] = 1
+
+			mat_train_cat = sp.zeros((self.k,self.train_cat.shape[1]))
+			for i in range(self.train_cat.shape[1]) :
+				for j in range(self.k) :
+					if self.train_cat[0,i]==j :
+						mat_train_cat[j,i] = 1
+			"""
+
+			mat_val_cat = sp.zeros((self.k,self.val_cat.shape[1]))
+
+			for i in range(self.val_cat.shape[1]) :
+				for j in range(self.k) :
+					if self.val_cat[0,i]==j :
+						mat_val_cat[j,i] = 1
+
+			mat_train_cat = sp.zeros((self.k,self.train_cat.shape[1]))
+			for i in range(self.train_cat.shape[1]) :
+				for j in range(self.k) :
+					if self.train_cat[0,i]==j :
+						mat_train_cat[j,i] = 1
+						
+			self.val_cat = mat_val_cat
+			self.train_cat = mat_train_cat
+		print "OK"
+		
 
 
 	def shuffleData(self):

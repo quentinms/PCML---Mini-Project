@@ -1,4 +1,5 @@
 import scipy as sp
+from scipy import linalg as LA
 
 class Error:
 	def __init__(self):
@@ -12,15 +13,18 @@ class Error:
 		error = 0
 		tmp = - result * expected
 		
-		#Negative error
-		error += sp.sum(sp.log1p(sp.exp(tmp[tmp<0])))
-		#Positive error
-		error += sp.sum(tmp[tmp>=0]+sp.log(1+sp.exp(tmp[tmp>=0])))
-		error /= result.shape[1]
+
 		if k==2 :
+			#Negative error
+			error += sp.sum(sp.log1p(sp.exp(tmp[tmp<0])))
+			#Positive error
+			error += sp.sum(tmp[tmp>=0]+sp.log(1+sp.exp(tmp[tmp>=0])))
+			error /= result.shape[1]
 			misclassified = sp.sum(sp.absolute(sp.sign(result)-expected))/2
 		else :
-			misclassified = sp.sum(sp.argmax(result,axis=0)!=sp.argmax(expected,axis=1))
+			error += 0.5*sp.sum(LA.norm(result-expected)**2)
+			error /= result.shape[1]	
+			misclassified = sp.sum(sp.argmax(result,axis=0)!=sp.argmax(expected, axis=0))
 
 
 		return error, misclassified

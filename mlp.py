@@ -77,9 +77,14 @@ class MLP:
 	def backward_pass(self, a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, t):
 	 	
 		# Third Layer
-		r3=	-t*self.sigmoid(-t*a3)
-		
-		grad3=sp.dot(r3,z2b.T);
+		if self.k == 2 :
+			r3=	-t*self.sigmoid(-t*a3)
+		else :
+			#print a3
+			#print t.T
+			r3 = a3 - t.T
+
+		grad3=sp.dot(r3,z2b.T)
 		
 		# Second Layer
 		r3w3T = sp.dot(self.w3[:,:-1].T, r3)
@@ -104,7 +109,10 @@ class MLP:
 
 	def descend(self, xL, xR, t):
 		
-		res = sp.zeros((1, xL.shape[1]))
+		if self.k==2 :
+			res = sp.zeros((1, xL.shape[1]))
+		else :
+			res = sp.zeros((self.k, xL.shape[1]))
 
 		for i in range(1,xL.shape[1]) :
 			a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(sp.array([xL[:,i]]).T, sp.array([xR[:,i]]).T)
@@ -117,7 +125,10 @@ class MLP:
 			self.w2lr, self.delta_w2lr_old = self.updateW(self.w2lr, grad2LR, self.delta_w2lr_old)
 			self.w3, self.delta_w3_old = self.updateW(self.w3, grad3, self.delta_w3_old)
 
-			res[0,i] = a3
+			if self.k==2 :
+				res[0,i] = a3
+			else :
+				res[:,i] = a3.squeeze()
 
 		return res
 
@@ -136,11 +147,16 @@ class MLP:
 
 	def classify(self):
 		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
-		#for i in range(a3.shape[1]):
-			#if i % 100 == 0:
-				#print a3[0,i], (self.data.val_cat[0,i])
-		classif = sp.sign(a3);
-		classif = sp.argmax(a3,axis=0);
+		for i in range(a3.shape[1]):
+			if i % 10 == 0:
+				if self.k == 2 :
+					print sp.sign(a3[:,i]), (self.data.val_cat[0,i])
+				else :	
+					print sp.argmax(a3[:,i], axis=0), sp.argmax(self.data.val_cat[:,i])
+		if self.k == 2 :
+			classif = sp.sign(a3);
+		else :
+			classif = sp.argmax(a3,axis=0);
 		return a3, classif
 	 	
 	def sigmoid(self, x) : 
