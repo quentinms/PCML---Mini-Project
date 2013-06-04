@@ -3,7 +3,7 @@ from train_validate import TrainerValidator
 
 def main():
 
-	test = TrainerValidator(5, 10, 2, 3, 0.001, 0.1, 20, 0,0)
+	test = TrainerValidator(2, 300, 20, 50, 0.01, 0, 10, 50, 100)
 	test.trainAndClassify()
 	test.plotResults()
 

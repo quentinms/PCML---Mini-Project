@@ -4,8 +4,10 @@ import scipy.io as spio
 
 class Data:
 
-	def __init__(self, k):
+	def __init__(self, k, train_size, validation_size):
 		self.k = k
+		self.train_size = train_size
+		self.validation_size = validation_size
 
 	def importDataFromMat(self):
 		print "Importing data ...",
@@ -15,12 +17,21 @@ class Data:
 		else :
 			tmp = spio.loadmat('miniproject_data/norb_5class.mat')
 
+		
 		size=tmp['train_cat_s'].shape[1]
+		print size
 
 		#Randomize indices
-		train_set_indices=sp.random.choice(size, (2*size/3), False)
+		sp.random.seed(1)
+		train_set_indices=sp.random.choice(size, 2*size/3, False)
 		complete_set_indices=sp.arange(size)
 		val_set_indices=sp.setdiff1d(complete_set_indices,train_set_indices);
+		if (self.train_size > 0) & (self.train_size < 2*size/3) :
+			train_set_indices=sp.random.choice(train_set_indices, self.train_size, False)
+		if (self.validation_size > 0) & (self.validation_size < size/3) :
+			val_set_indices=sp.random.choice(val_set_indices, self.validation_size, False)
+		print train_set_indices
+		print val_set_indices
 
 		#Training Data
 		self.train_cat=sp.array(tmp['train_cat_s'][:,train_set_indices], dtype='int8')
@@ -80,6 +91,13 @@ class Data:
 		self.val_left = self.normalizeDataset(self.val_left)
 		self.val_right = self.normalizeDataset(self.val_right)
 		print "OK"
+
+		print "Normalizing test set...",
+		self.test_left = self.normalizeDataset(self.test_left)
+		self.test_right = self.normalizeDataset(self.test_right)
+		print "OK"
+
+
 		print "Normalizing categories' labels...",
 
 		if self.k == 2:
@@ -88,27 +106,25 @@ class Data:
 			self.train_cat[self.train_cat == categories[1]] = 1
 			self.val_cat[self.val_cat == categories[0]] = -1
 			self.val_cat[self.val_cat == categories[1]] = 1	
+			self.test_cat[self.test_cat == categories[0]] = -1
+			self.test_cat[self.test_cat == categories[1]] = 1	
 
 		else :
-			mat_val_cat = sp.zeros((self.k,self.val_cat.shape[1]))
 
-			for i in range(self.val_cat.shape[1]) :
-				for j in range(self.k) :
-					if self.val_cat[0,i]==j :
-						mat_val_cat[j,i] = 1
-
-			mat_train_cat = sp.zeros((self.k,self.train_cat.shape[1]))
-			for i in range(self.train_cat.shape[1]) :
-				for j in range(self.k) :
-					if self.train_cat[0,i]==j :
-						mat_train_cat[j,i] = 1
-
-			self.val_cat = mat_val_cat
-			self.train_cat = mat_train_cat
+			self.val_cat = self.buildCatMatrix(self.val_cat)
+			self.train_cat = self.buildCatMatrix(self.train_cat)
+			self.test_cat = self.buildCatMatrix(self.test_cat)
 
 		print "OK"
-		
 
+	def buildCatMatrix(self, cat) :
+		mat_cat = sp.zeros((self.k,cat.shape[1]))
+		for i in range(cat.shape[1]) :
+			for j in range(self.k) :
+				if cat[0,i]==j :
+					mat_cat[j,i] = 1
+
+		return mat_train
 
 	def shuffleData(self):
 

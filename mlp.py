@@ -5,17 +5,17 @@ from error import Error
 
 class MLP:
 
-	def __init__(self, H1, H2, dimension, nu, mu, batchsize, k, data):
+	def __init__(self, H1, H2, image_dim, nu, mu, batchsize, k, data):
 		self.data = data
 
 		self.H1 = H1
 		self.H2 = H2
-		self.dimension = dimension
+		self.image_dim = image_dim
 
 		self.k = k;
 		
-		self.w1l = sp.random.normal(0, 1.0/sp.sqrt(dimension), (H1, (dimension+1)))
-		self.w1r = sp.random.normal(0, 1.0/sp.sqrt(dimension), (H1, (dimension+1)))
+		self.w1l = sp.random.normal(0, 1.0/sp.sqrt(image_dim), (H1, (image_dim+1)))
+		self.w1r = sp.random.normal(0, 1.0/sp.sqrt(image_dim), (H1, (image_dim+1)))
 		self.w2l = sp.random.normal(0, 1.0/sp.sqrt(H1), (H2, H1+1))
 		self.w2lr = sp.random.normal(0, 1.0/sp.sqrt((2*H1)), (H2, (2*H1)+1))
 		self.w2r = sp.random.normal(0, 1.0/sp.sqrt(H1), (H2, H1+1))
@@ -106,7 +106,6 @@ class MLP:
 		lower_bound = 0
 		upper_bound = self.batch_size
 		while True :
-			#print sp.array(xL[:,lower_bound:upper_bound])
 			a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(sp.array(xL[:,lower_bound:upper_bound]), sp.array(xR[:,lower_bound:upper_bound]))
 			grad3, grad2L, grad2LR, grad2R, grad1L, grad1R = self.backward_pass(a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, sp.array(t[:,lower_bound:upper_bound]));
 
