@@ -154,26 +154,20 @@ class MLP:
 		grad3, grad2L, grad2LR, grad2R, grad1L, grad1R = self.backward_pass(a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, self.data.val_cat)
 		expected_gradient = grad1L[0,8];
 
-		print "grad3 shape : "+str(grad3.shape)
-		print "w3 shape : "+str(self.w3.shape)
-		print "w3 initial = "+str(self.w3[0,1])
-
 		e=Error()
 
 		self.w1l[0,8] += epsilon
 		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
 		e_plus = e.total_error(a3,self.data.val_cat, self.k)[0]
-		print "E+ = "+str(e_plus)
+
 		self.w1l[0,8] -= (2*epsilon)
 		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
 		e_minus = e.total_error(a3,self.data.val_cat, self.k)[0]
-		print "E- = "+str(e_minus)
+
 		self.w1l[0,8] += epsilon
 
 		difference = (e_plus-e_minus)
-		print 2*epsilon
 		approx_grad = difference/(2*epsilon)
-		grad=grad1L[0,8]
 
 		print "Derivative = "+str(approx_grad)
 		print "Gradient = "+str(expected_gradient)

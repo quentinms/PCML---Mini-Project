@@ -23,8 +23,13 @@ class Error:
 		else :
 			error += 0.5*sp.sum(LA.norm(result-expected)**2)
 			misclassified = sp.sum(sp.argmax(result,axis=0)!=sp.argmax(expected, axis=0))
-		error /= result.shape[1]
+		#error /= result.shape[1]
 		misclassified /= result.shape[1]*1.0
 
+		return error, misclassified
+
+	def norm_total_error(self, result, expected, k):
+		error, misclassified = self.total_error(result, expected, k)
+		error /= result.shape[1]
 
 		return error, misclassified
