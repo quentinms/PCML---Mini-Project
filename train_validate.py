@@ -26,21 +26,10 @@ class TrainerValidator:
 		self.misclassified_train = sp.zeros(self.NUM_EPOCH+1)
 
 	def trainAndClassify(self):
-		"""
-		for i in range(self.NUM_EPOCH+1):
-			self.data.shuffleData()
-			results_train = self.mlp.train()
-			results_val, results_classif = self.mlp.classify()
-		
-			if i != self.NUM_EPOCH :
-				self.validation_error[i], self.misclassified_val[i] = self.error.norm_total_error(results_val, self.data.val_cat, self.k)
-				print "Epoch #"+str(i+1)+" Ratio of misclassified: "+str(self.misclassified_val[i])+" - Error: "+str(self.validation_error[i])
-			if i != 0 :
-				self.training_error[i-1], self.misclassified_train[i-1] = self.error.norm_total_error(results_train, self.data.train_cat, self.k)
-		"""
+
 		results_val, results_classif = self.mlp.classify()
 		for i in range(self.NUM_EPOCH+1):
-			
+			self.data.shuffleData()
 			self.validation_error[i], self.misclassified_val[i] = self.error.norm_total_error(results_val, self.data.val_cat, self.k)
 			print "Epoch #"+str(i)+" Ratio of misclassified: "+str(self.misclassified_val[i])+" - Error: "+str(self.validation_error[i])
 			
