@@ -14,7 +14,7 @@ class TrainerValidator:
 		self.data = Data(self.k)
 		self.data.importDataFromMat()
 		self.data.normalize()
-		self.data.shuffleData()
+		
 
 		self.mlp = MLP(H1,H2,576, nu, mu, self.k, self.data)
 		self.error = Error()
@@ -27,6 +27,7 @@ class TrainerValidator:
 
 	def trainAndClassify(self):
 		for i in range(self.NUM_EPOCH+1):
+			self.data.shuffleData()
 			results_train = self.mlp.train()
 			results_val, results_classif = self.mlp.classify()
 		
