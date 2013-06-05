@@ -23,14 +23,16 @@ class Data:
 
 		#Randomize indices
 		sp.random.seed(1)
-		train_set_indices=sp.random.choice(size, 2*size/3, False)
+		#train_set_indices=sp.random.choice(size, 2*size/3, False)
+		train_set_indices = self.choice(size, 2*size/3)
 		complete_set_indices=sp.arange(size)
 		val_set_indices=sp.setdiff1d(complete_set_indices,train_set_indices);
 		if (self.train_size > 0) & (self.train_size < 2*size/3) :
-			train_set_indices=sp.random.choice(train_set_indices, self.train_size, False)
+			#train_set_indices=sp.random.choice(train_set_indices, self.train_size, False)
+			train_set_indices=self.choice(train_set_indices, self.train_size)
 		if (self.validation_size > 0) & (self.validation_size < size/3) :
-			val_set_indices=sp.random.choice(val_set_indices, self.validation_size, False)
-
+			#val_set_indices=sp.random.choice(val_set_indices, self.validation_size, False)
+			val_set_indices=self.choice(val_set_indices, self.validation_size)
 		#Training Data
 		self.train_cat=sp.array(tmp['train_cat_s'][:,train_set_indices], dtype='int8')
 		self.train_left=sp.array(tmp['train_left_s'][:,train_set_indices],dtype=float)
@@ -134,4 +136,8 @@ class Data:
 		self.train_left = self.train_left[:,rand_index]
 		self.train_right = self.train_right[:,rand_index]
 		print "OK"
+
+	def choice(self, size_total, size) :
+		rand_index = sp.random.permutation(size_total)
+		return rand_index[0:size]
 		

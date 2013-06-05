@@ -11,7 +11,7 @@ def main():
 	data.importDataFromMat()
 	data.normalize()
 
-	train = TrainerValidator(k, 20, 20, 50, 0.001, 0.1, 1, data)
+	train = TrainerValidator(k, 60, 20, 50, 0.001, 0.1, 1, data)
 	train.trainAndClassify()
 	train.plotResults()
 
