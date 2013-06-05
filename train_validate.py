@@ -8,15 +8,12 @@ import scipy as sp
 
 class TrainerValidator:
 
-	def __init__(self, k, nb_epochs, H1, H2, nu, mu, batchsize, train_set_size, validation_set_size):
+	def __init__(self, k, nb_epochs, H1, H2, nu, mu, batchsize, data):
 		self.k = k
 
-		self.data = Data(self.k, train_set_size, validation_set_size)
-		self.data.importDataFromMat()
-		self.data.normalize()
-		
-
-		self.mlp = MLP(H1,H2,576, nu, mu, batchsize, self.k, self.data)
+		self.data = data
+	
+		self.mlp = MLP(H1,H2,576, nu, mu, batchsize, self.k)
 		self.error = Error()
 		self.NUM_EPOCH = nb_epochs
 
@@ -31,15 +28,16 @@ class TrainerValidator:
 		var_thresh = 0.005
 		for i in range(self.NUM_EPOCH+1):
 			self.data.shuffleData()
-			self.mlp.train()
-			_, _, _, _, _, results_train, _, _, _, _, _, _ = self.mlp.forward_pass(self.mlp.data.train_left, self.mlp.data.train_right)
-			results_val, results_classif = self.mlp.classify()
+			self.mlp.train(self.data.train_left, self.data.train_right, self.data.train_cat)
+			_, _, _, _, _, results_train, _, _, _, _, _, _ = self.mlp.forward_pass(self.data.train_left, self.data.train_right)
+			results_val, results_classif = self.mlp.classify(self.data.val_left, self.data.val_right)
 
 			self.training_error[i], self.misclassified_train[i] = self.error.norm_total_error(results_train, self.data.train_cat, self.k)
 			self.validation_error[i], self.misclassified_val[i] = self.error.norm_total_error(results_val, self.data.val_cat, self.k)
 
 			print "Epoch #"+str(i)+" Ratio of misclassified: "+str(self.misclassified_val[i])+" - Error: "+str(self.validation_error[i])
 
+			"""
 			# Early stopping
 			if i > 0 :
 				if (self.validation_error[i]>(self.validation_error[i-1]*(1-var_thresh))) :
@@ -49,10 +47,11 @@ class TrainerValidator:
 						converge -= 1/2
 
 			if converge>=a :
-				print "Triggering early stopping (Cause : increasing or convergence of the error has been detected)"
+				print "Triggering early stopping - Cause : increasing(overfitting) or convergence of the error has been detected"
 				break
+			"""
 						
-		#self.mlp.test_gradient()
+		#self.mlp.test_gradient(self.data.val_left, self.data.val_right, self.data.val_cat)
 
 	def plotResults(self):
 		error_fig = plt.figure()
@@ -72,7 +71,10 @@ class TrainerValidator:
 		ax2.set_ylabel('misclassified')
 		ax2.set_xlabel('epoch')
 		plt.legend()
-		plt.show()
+		#plt.show()
+
+	def getMLP(self) :
+		return self.mlp
 		
 
 		

@@ -1,6 +1,6 @@
 import scipy as sp
 import scipy.io as spio
-#from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 
 class Data:
 
@@ -30,8 +30,6 @@ class Data:
 			train_set_indices=sp.random.choice(train_set_indices, self.train_size, False)
 		if (self.validation_size > 0) & (self.validation_size < size/3) :
 			val_set_indices=sp.random.choice(val_set_indices, self.validation_size, False)
-		print train_set_indices
-		print val_set_indices
 
 		#Training Data
 		self.train_cat=sp.array(tmp['train_cat_s'][:,train_set_indices], dtype='int8')
@@ -44,14 +42,14 @@ class Data:
 		self.val_right=sp.array(tmp['train_right_s'][:,val_set_indices],dtype=float)
 
 		#Test Data
-		self.test_cat=sp.array(tmp['test_left_s'], dtype='int8')
+		self.test_cat=sp.array(tmp['test_cat_s'], dtype='int8')
 		self.test_left=sp.array(tmp['test_left_s'], dtype=float)
 		self.test_right=sp.array(tmp['test_right_s'], dtype=float)
 
 		print "OK"
 				
 		#Show image
-		#plt.imshow(sp.reshape(test_left_s[:,30],(24,24)))
+		#plt.imshow(sp.reshape(self.test_left[:,33],(24,24)))
 		#plt.show()
 
 	def normalizeTrainingData(self, data):
@@ -107,7 +105,7 @@ class Data:
 			self.val_cat[self.val_cat == categories[0]] = -1
 			self.val_cat[self.val_cat == categories[1]] = 1	
 			self.test_cat[self.test_cat == categories[0]] = -1
-			self.test_cat[self.test_cat == categories[1]] = 1	
+			self.test_cat[self.test_cat == categories[1]] = 1
 
 		else :
 
@@ -124,7 +122,7 @@ class Data:
 				if cat[0,i]==j :
 					mat_cat[j,i] = 1
 
-		return mat_train
+		return mat_cat
 
 	def shuffleData(self):
 

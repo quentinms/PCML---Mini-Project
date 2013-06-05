@@ -5,9 +5,7 @@ from error import Error
 
 class MLP:
 
-	def __init__(self, H1, H2, image_dim, nu, mu, batchsize, k, data):
-		self.data = data
-
+	def __init__(self, H1, H2, image_dim, nu, mu, batchsize, k):
 		self.H1 = H1
 		self.H2 = H2
 		self.image_dim = image_dim
@@ -129,11 +127,11 @@ class MLP:
 		return w_new, delta_w_new
 
 
-	def train(self):
-		self.descent(self.data.train_left, self.data.train_right,self.data.train_cat)
+	def train(self, xL, xR, cat):
+		self.descent(xL, xR, cat)
 
-	def classify(self):
-		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
+	def classify(self, xL, xR):
+		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(xL, xR)
 		if self.k == 2 :
 			classif = sp.sign(a3);
 		else :
@@ -145,22 +143,22 @@ class MLP:
 	def divsigmoid(self, x) :
 		return sp.exp(-x)/sp.power((1.0+sp.exp(-x)),2)
 
-	def test_gradient(self):
+	def test_gradient(self, xL, xR, cat):
 		epsilon = 10**(-8)
 
-		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
-		grad3, grad2L, grad2LR, grad2R, grad1L, grad1R = self.backward_pass(a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, self.data.val_cat)
+		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(xL, xR)
+		grad3, grad2L, grad2LR, grad2R, grad1L, grad1R = self.backward_pass(a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb, cat)
 		expected_gradient = grad1L[0,8];
 
 		e=Error()
 
 		self.w1l[0,8] += epsilon
-		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
-		e_plus = e.total_error(a3,self.data.val_cat, self.k)[0]
+		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(xL, xR)
+		e_plus = e.total_error(a3,cat, self.k)[0]
 
 		self.w1l[0,8] -= (2*epsilon)
-		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(self.data.val_left, self.data.val_right)
-		e_minus = e.total_error(a3,self.data.val_cat, self.k)[0]
+		a1L, a1R, a2L, a2LR, a2R, a3, z1Lb, z1LRb, z1Rb, z2b, xLb, xRb = self.forward_pass(xL, xR)
+		e_minus = e.total_error(a3,cat, self.k)[0]
 
 		self.w1l[0,8] += epsilon
 
