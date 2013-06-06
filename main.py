@@ -3,6 +3,8 @@ from data import Data
 from model_evaluation import ModelEvaluation
 from test import Test
 import matplotlib.pyplot as plt
+import scipy as sp
+
 
 
 def main():

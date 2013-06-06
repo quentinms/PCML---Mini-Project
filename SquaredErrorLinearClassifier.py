@@ -3,10 +3,9 @@ import scipy.linalg as LA
 
 class SquaredErrorLinearClassifier:
 
-	def __init__(self, v, k, data):
+	def __init__(self, v, k):
 		self.v = v
 		self.k = k
-		self.data = data
 		self.w = None
 
 	def train(self, xL, xR, cat):
@@ -55,35 +54,5 @@ class SquaredErrorLinearClassifier:
 
 		return error/size
 
-	def crossvalidation(self, fold, v):
-		#Split dataset in 10
-		#Compute error for training set \ training set _ i
-		#Average
-
-		self.v = v
-
-		error = 0
-
-		n = self.data.train_cat.shape[1]
-		all_indices = sp.arange(n)
-		self.data.shuffleData()
-
-		dataset_indices = sp.split(all_indices, fold)
-
-		for i in range(fold):
-			set_without_D_i_indices = sp.concatenate(dataset_indices[0:i]+dataset_indices[i+1:fold])
-			
-			print "-"*30+"train"+"-"*30
-			self.train(self.data.train_left[:,set_without_D_i_indices], self.data.train_right[:,set_without_D_i_indices], self.data.train_cat[:,set_without_D_i_indices])
-			print "-"*30+"classify"+"-"*30
-			results, classes = self.classify(self.data.train_left[:,dataset_indices[i]], self.data.train_right[:,dataset_indices[i]])
-			print "-"*30+"error"+"-"*30
-			err,  _ = self.error(results, self.data.train_cat[:,dataset_indices[i]].T)
-
-			error += fold/(n*1.0)*err
-
-		error = error / fold
-
-		return error
 
 
