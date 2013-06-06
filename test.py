@@ -103,16 +103,12 @@ class Test:
 
 	def plot_confusion_matrix(self) :
 		if self.k == 2:
-			print self.test_classif.shape
-			print self.data.test_cat
 			classif = self.test_classif
 			cat = self.data.test_cat
 			classif[self.test_classif == -1] = 0
 			cat[self.data.test_cat == -1] = 0
 			self.confusion_matrix(classif[0,:], cat[0,:])
 		else :
-			print self.test_classif.shape
-			print self.data.test_cat.argmax(axis=0).shape
 			self.confusion_matrix(self.test_classif, self.data.test_cat.argmax(axis=0))
 
 	def confusion_matrix(self, result, expected) :
@@ -124,7 +120,7 @@ class Test:
 			conf = plt.figure()
 			ax = conf.add_subplot(111)
 			ax.imshow(confusion_matrix, cmap=cm.get_cmap(name='gray_r'), interpolation='nearest')
-			plt.show()
+			
 			
 
 
