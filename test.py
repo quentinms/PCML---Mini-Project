@@ -101,13 +101,24 @@ class Test:
 			ax4.imshow(sp.reshape(self.data.test_left[:,minindex],(24,24)), cmap=plt.gray())
 			plt.show()
 
-	def confusion_matrix(self) :
+	def plot_confusion_matrix(self) :
 		if self.k == 2:
-			confusion_matrix = sp.zeros(2)
+			print self.test_classif.shape
+			print self.data.test_cat
+			classif = self.test_classif
+			cat = self.data.test_cat
+			classif[self.test_classif == -1] = 0
+			cat[self.data.test_cat == -1] = 0
+			self.confusion_matrix(classif[0,:], cat[0,:])
 		else :
+			print self.test_classif.shape
+			print self.data.test_cat.argmax(axis=0).shape
+			self.confusion_matrix(self.test_classif, self.data.test_cat.argmax(axis=0))
+
+	def confusion_matrix(self, result, expected) :
 			confusion_matrix = sp.zeros((self.k, self.k))
-			for i in range(self.test_classif.shape[0]) :
-				confusion_matrix[self.test_classif[i]][self.data.test_cat[:,i].argmax()] += 1
+			for i in range(result.shape[0]) :
+				confusion_matrix[result[i]][expected[i]] += 1
 			print confusion_matrix
 
 			conf = plt.figure()
