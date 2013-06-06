@@ -2,5 +2,4 @@
 
 ## TODO
 
-* Gradient Descent
-* Everything else
+* Parameters finding

@@ -12,6 +12,12 @@ class TrainerValidator:
 		self.k = k
 
 		self.data = data
+
+		self.H1 = H1
+		self.H2 = H2
+		self.mu = mu
+		self.nu = nu 
+		self.batchsize = batchsize
 	
 		self.mlp = MLP(H1,H2,576, nu, mu, batchsize, self.k)
 		self.error = Error()
@@ -61,9 +67,19 @@ class TrainerValidator:
 		#ax1.set_xlim([1,self.NUM_EPOCH])
 		ax1.set_ylabel('error')
 		ax1.set_xlabel('epoch')
+
+		title = "k=%d H1=%d H2=%d mu=%f nu=%f batch=%d" % (self.k, self.H1, self.H2, self.mu, self.nu, self.batchsize)
+		error_fig.suptitle(title)
+
 		plt.legend()
 
+		filename = "k=%d-H1=%d-H2=%d-mu=%f-nu=%f-batch=%d-nb_epoch=%d" % (self.k,self.H1, self.H2, self.mu, self.nu, self.batchsize, self.NUM_EPOCH)
+
+		plt.savefig('results/'+filename+"-error.png")
+		
+
 		mis_fig = plt.figure()
+		mis_fig.suptitle(title)
 		ax2 = mis_fig.add_subplot(111)
 		ax2.plot(self.misclassified_val, label='misclassified ratio (validation)')
 		ax2.plot(self.misclassified_train, label='misclassified ratio (training)')
@@ -71,6 +87,7 @@ class TrainerValidator:
 		ax2.set_ylabel('misclassified')
 		ax2.set_xlabel('epoch')
 		plt.legend()
+		plt.savefig('results/'+filename+"-misclassified.png")
 		#plt.show()
 
 	def getMLP(self) :
