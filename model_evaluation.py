@@ -38,7 +38,7 @@ class ModelEvaluation :
 
 	def createMLPsP(self, H1, H2, nu, batchsize, k):
 		
-		for j in range(10) :
+		for j in range(8) :
 			data = Data(k, 0, 0)
 			data.importDataFromMat()
 			data.normalize()
