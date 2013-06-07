@@ -22,7 +22,7 @@ class ModelEvaluation :
 			
 	def findNuMu(self, H1, H2, batchsize, k):
 
-		nu = [0.001, 0.01, 0.06, 0.1, 0.2, 0.3]
+		nu = [0.001, 0.01, 0.04, 0.08, 0.1]
 		for i in nu :
 			t = Thread(target=self.createMLPsP, args=(H1, H2, i, batchsize, k))
 			t.start()
@@ -79,11 +79,11 @@ class ModelEvaluation :
 
 	def createMLPsP(self, H1, H2, nu, batchsize, k):
 		
-		for j in range(8) :
+		for j in range(4,8) :
 			data = Data(k, 0, 0)
 			data.importDataFromMat()
 			data.normalize()
-			train = TrainerValidator(k, 5, H1, H2, nu, j/10.0, batchsize, data)
+			train = TrainerValidator(k, 50, H1, H2, nu, j/10.0, batchsize, data)
 			train.trainAndClassify()
 			train.plotResults()
 

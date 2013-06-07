@@ -1,0 +1,40 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\DeclareMathOperator*{\diag}{diag}
+\begin{document}
+
+\section*{Backward Propagation}
+\subsection*{R$^{(3)}$}
+$$r^{(3)}=\frac{\partial E(w)}{\partial a^{(3)}} = \frac{-t}{e^{ta^{(3)}}+1} = -t\sigma{(-ta^{(3)})}$$
+$$\mathbf{r}^{(3)}= t\sigma{(-t\mathbf{a}^{(3)})}$$
+$$\mathbf{\nabla^{(3)}}= \mathbf{r}^{(3)} \cdot \mathbf{Z}^{(2)T}$$
+
+\subsection*{R$^{(2)}$}
+$$ r^{(2)}_{q} = \frac{\partial E(w)}{\partial a^{(2)}_q} = \frac{\partial E(w)}{\partial a^{(3)}}\frac{\partial a^{(3)}}{\partial a^{(2)}_q}  $$
+\subsubsection*{L}
+$$r^{(2)}_{L, q} = r^{(3)} \frac{w^{(3)}_{q} \cdot a_{LR,q}^{(2)} \cdot e^{a_{R,q}^{(2)}+a_{L,q}^{(2)}}}{(e^{a_{R,q}^{(2)}}+1)(e^{a_{L,q}^{(2)}}+1)^2}
+=r^{(3)} w^{(3)}_{q} a_{LR,q}^{(2)} \sigma (a_{R,q}^{(2)}) \frac{\partial \sigma (a_{L,q}^{(2)})}{\partial a_{L,q}^{(2)}}$$
+$$\mathbf{R}_L^{(2)}=({\mathbf{W}^{(3)}}^T \cdot \mathbf{r}^{(3)}) *\mathbf{A}_{LR,q}^{(2)} *  \sigma (\mathbf{A}_{R}^{(2)}) * \frac{\partial \sigma (\mathbf{A}_{L}^{(2)})}{\partial \mathbf{A}_{L}^{(2)}})$$
+$$\mathbf{\nabla^{(2)}_L}= \mathbf{R}^{(2)}_L \cdot \mathbf{Z}^{(1)T}_L$$
+\subsubsection*{R}
+$$r^{(2)}_{R, q} = r^{(3)} \frac{w^{(3)}_{q} \cdot a_{LR,q}^{(2)} \cdot e^{a_{R,q}^{(2)}+a_{L,q}^{(2)}}}{(e^{a_{L,q}^{(2)}}+1)(e^{a_{R,q}^{(2)}}+1)^2}
+=r^{(3)} w^{(3)}_{q} a_{LR,q}^{(2)} \sigma (a_{L,q}^{(2)}) \frac{\partial \sigma (a_{R,q}^{(2)})}{\partial a_{R,q}^{(2)}}$$
+$$\mathbf{R}_R^{(2)}=({\mathbf{W}^{(3)}}^T \cdot \mathbf{r}^{(3)}) *\mathbf{A}_{LR,q}^{(2)} *  \sigma (\mathbf{A}_{L}^{(2)}) * \frac{\partial \sigma (\mathbf{A}_{R}^{(2)})}{\partial \mathbf{A}_{R}^{(2)}})$$
+$$\mathbf{\nabla^{(2)}_R}= \mathbf{R}^{(2)}_R \cdot \mathbf{Z}^{(1)T}_R$$
+\subsubsection*{LR}
+$$r^{(2)}_{LR,q} =r^{(3)} \frac{w^{(3)}_{q}}{(e^{-a_{L,q}^{(2)}}+1)(e^{-a_{R,q}^{(2)}}+1)}
+=r^{(3)} w^{(3)}_{q} \sigma (a_{L,q}^{(2)}) \sigma (a_{R,q}^{(2)}) $$
+$$\mathbf{R}^{(2)}_{LR} = {(\mathbf{W}^{(3)}}^T \cdot \mathbf{r}^{(3)}) * ( \sigma (\mathbf{A}_{L}^{(2)}) * (\sigma (\mathbf{A}_{R}^{(2)}))) $$
+$$\mathbf{\nabla^{(2)}_{LR}}= \mathbf{R}^{(2)}_{LR} \cdot \mathbf{Z}^{(1)T}_{LR}$$
+\subsection*{R$^{(1)}$}
+\subsubsection*{L} 
+$$r^{(1)}_{L,q} = \frac{\partial E(w)}{\partial a^{(1)}_{L,q}} =\sum_{k} ( \frac{\partial E(w)}{\partial a^{(2)}_{L,k}} \frac{\partial a^{(2)}_{L,k}}{\partial a^{(1)}_{L,q}} + \frac{\partial E(w)}{\partial a^{(2)}_{R,k}} \frac{\partial a^{(2)}_{R,k}}{\partial a^{(1)}_{L,q}} +  \frac{\partial E(w)}{\partial a^{(2)}_{LR,k}} \frac{\partial a^{(2)}_{LR,k}}{\partial a^{(1)}_{L,q}} )$$
+$$= sech(a_{L,q}^{(1)})^2 \sum_{k} (r^{(2)}_{L,k}\cdot w_{L,k,q}^{(2)} +r^{(2)}_{LR,k} \cdot w_{LR,k,q}^{(2)}) $$
+$$\mathbf{R}^{(1)}_{L} = (sech(\mathbf{A}_{L}^{(1)})^2) * ( {\mathbf{W}_{L}^{(2)}}^T \cdot \mathbf{R}_{L}^{(2)} + {\mathbf{W}_{LR}^{(2)}}^T \cdot \mathbf{R}_{LR}^{(2)}) $$
+$$\mathbf{\nabla^{(1)}_L}= \mathbf{R}^{(1)}_L \cdot \mathbf{X}^{(1)T}_L$$
+\subsubsection*{R}
+$$r^{(1)}_{R,q} = \frac{\partial E(w)}{\partial a^{(1)}_{R,q}} =\sum_{k} ( \frac{\partial E(w)}{\partial a^{(2)}_{L,k}} \frac{\partial a^{(2)}_{L,k}}{\partial a^{(1)}_{R,q}} + \frac{\partial E(w)}{\partial a^{(2)}_{R,k}} \frac{\partial a^{(2)}_{R,k}}{\partial a^{(1)}_{R,q}} +  \frac{\partial E(w)}{\partial a^{(2)}_{LR,k}} \frac{\partial a^{(2)}_{LR,k}}{\partial a^{(1)}_{R,q}} )$$
+$$= sech(a_{R,q}^{(1)})^2 \sum_{k} (r^{(2)}_{R,k}\cdot w_{R,k,q}^{(2)} +r^{(2)}_{LR,k} \cdot w_{LR,k,q}^{(2)}) $$
+$$\mathbf{R}^{(1)}_{R} = (sech(\mathbf{A}_{L}^{(R)})^2) * ( {\mathbf{W}_{R}^{(2)}}^T \cdot \mathbf{R}_{R}^{(2)} + {\mathbf{W}_{LR}^{(2)}}^T \cdot \mathbf{R}_{LR}^{(2)}) $$
+$$\mathbf{\nabla^{(1)}_R}= \mathbf{R}^{(1)}_R \cdot \mathbf{X}^{(1)T}_R$$
+\end{document}

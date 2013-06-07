@@ -9,17 +9,17 @@ import scipy as sp
 
 def main():
 
-	k=2
+	k=5
 	"""
-	data = Data(k, 0, 0)
+	data = Data(k, 20, 20)
 	data.importDataFromMat()
 	data.normalize()
 	"""
 
 	evalModel = ModelEvaluation()
-	evalModel.findNuMu(100, 10, 1, k)
+	evalModel.findNuMu(80, 60, 1, k)
 	"""
-	train = TrainerValidator(k, 160, 30, 60, 0.001, 0.1, 1, data)
+	train = TrainerValidator(k, 160, 100, 10, 0.1, 0, 1, data)
 	train.trainAndClassify()
 	train.plotResults()
 

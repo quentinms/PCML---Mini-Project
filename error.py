@@ -19,6 +19,7 @@ class Error:
 			error += sp.sum(sp.log1p(sp.exp(tmp[tmp<0])))
 			#Positive error
 			error += sp.sum(tmp[tmp>=0]+sp.log(1+sp.exp(tmp[tmp>=0])))
+			print result
 			misclassified = sp.sum(sp.absolute(sp.sign(result)-expected))/2
 		else :
 			error += 0.5*sp.sum(LA.norm(result-expected)**2)
