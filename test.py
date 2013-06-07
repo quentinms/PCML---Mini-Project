@@ -45,14 +45,14 @@ class Test:
 			#Show image
 			best_fig = plt.figure()
 			ax5 = best_fig.add_subplot(111)
-			ax5.imshow(sp.reshape(self.data.test_left[:,large_pos],(24,24)))
+			ax5.imshow(sp.reshape(self.data.test_left[:,large_pos],(24,24)), cmap=plt.gray())
 			worst_fig = plt.figure()
 			ax3 = worst_fig.add_subplot(111)
-			ax3.imshow(sp.reshape(self.data.test_left[:,large_neg],(24,24)))
+			ax3.imshow(sp.reshape(self.data.test_left[:,large_neg],(24,24)), cmap=plt.gray())
 			almost_fig = plt.figure()
 			ax4 = almost_fig.add_subplot(111)
-			ax4.imshow(sp.reshape(self.data.test_left[:,close_0],(24,24)))
-			plt.show()
+			ax4.imshow(sp.reshape(self.data.test_left[:,close_0],(24,24)), cmap=plt.gray())
+			
 
 		else :
 			print self.test_val
@@ -99,7 +99,7 @@ class Test:
 			almost_fig = plt.figure()
 			ax4 = almost_fig.add_subplot(111)
 			ax4.imshow(sp.reshape(self.data.test_left[:,minindex],(24,24)), cmap=plt.gray())
-			plt.show()
+			
 
 	def plot_confusion_matrix(self) :
 		if self.k == 2:
@@ -120,6 +120,7 @@ class Test:
 			conf = plt.figure()
 			ax = conf.add_subplot(111)
 			ax.imshow(confusion_matrix, cmap=cm.get_cmap(name='gray_r'), interpolation='nearest')
+			
 			
 			
 
