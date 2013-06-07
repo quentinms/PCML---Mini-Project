@@ -99,6 +99,7 @@ class MLP:
 		
 		return grad3, grad2L, grad2LR, grad2R, grad1L, grad1R
 
+	#Stochastic gradient descent
 	def descent(self, xL, xR, t):
 
 		lower_bound = 0
@@ -119,7 +120,6 @@ class MLP:
 
 			lower_bound = min(lower_bound+self.batch_size, xL.shape[1])
 			upper_bound = min(upper_bound+self.batch_size, xL.shape[1])
-			#print upper_bound
 
 	def updateW(self, w_old, gradients, delta_w_old):
 		delta_w_new = -self.nu*(1-self.mu)*gradients+self.mu*delta_w_old
@@ -143,6 +143,7 @@ class MLP:
 	def divsigmoid(self, x) :
 		return sp.exp(-x)/sp.power((1.0+sp.exp(-x)),2)
 
+	#Can be used to test that the gradient is correct, see the course notes
 	def test_gradient(self, xL, xR, cat):
 		epsilon = 10**(-8)
 

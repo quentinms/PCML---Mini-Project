@@ -32,6 +32,7 @@ class TrainerValidator:
 		converge = 0
 		a = 4
 		var_thresh = 0.005
+		early_stopping = 0
 		for i in range(self.NUM_EPOCH+1):
 			self.data.shuffleData()
 			self.mlp.train(self.data.train_left, self.data.train_right, self.data.train_cat)
@@ -43,20 +44,19 @@ class TrainerValidator:
 
 			print "Epoch #"+str(i)+" Ratio of misclassified: "+str(self.misclassified_val[i])+" - Error: "+str(self.validation_error[i])
 
-			"""
+			
 			# Early stopping
-			if i > 0 :
-				if (self.validation_error[i]>(self.validation_error[i-1]*(1-var_thresh))) :
-					converge += 1
-				else :
-					if converge > 0 :
-						converge -= 1/2
+			if early_stopping :
+				if i > 0 :
+					if (self.validation_error[i]>(self.validation_error[i-1]*(1-var_thresh))) :
+						converge += 1
+					else :
+						if converge > 0 :
+							converge -= 1/2
 
-			if converge>=a :
-				print "Triggering early stopping - Cause : increasing(overfitting) or convergence of the error has been detected"
-				break
-			"""
-						
+				if converge>=a :
+					print "Triggering early stopping - Cause : increasing(overfitting) or convergence of the error has been detected"
+					break
 		#self.mlp.test_gradient(self.data.val_left, self.data.val_right, self.data.val_cat)
 
 	def plotResults(self):
@@ -64,7 +64,6 @@ class TrainerValidator:
 		ax1 = error_fig.add_subplot(111)
 		ax1.plot(self.validation_error, label='validation error')
 		ax1.plot(self.training_error, label='training error')
-		#ax1.set_xlim([1,self.NUM_EPOCH])
 		ax1.set_ylabel('error')
 		ax1.set_xlabel('epoch')
 

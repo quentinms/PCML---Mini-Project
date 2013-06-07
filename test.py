@@ -22,11 +22,10 @@ class Test:
 		print "TEST ERROR :"+str(test_error)
 		print "TEST MISCLASSIFICATION RATIO :"+str(misclassified_test)
 
+	#Find a good example (large positive t*a), a bad one (large negative t*a) and a slightly bad one (negative t*a close to 0)
 	def examples(self) :
 		if self.k == 2 :
 			misclass = self.test_val * self.data.test_cat
-			print misclass
-			print misclass[misclass < 0]
 			large_pos = sp.argmax(misclass)
 			print "Largest positive t*a : "+str(max(misclass[misclass > 0]))
 			print "Category : "+str(self.data.test_cat[:,large_pos])
@@ -55,14 +54,12 @@ class Test:
 			
 
 		else :
-			print self.test_val
 			err = Error()
 			maxerr = -float("inf")
 			minerr = float("inf")
 			besterr = float("inf")
 			for i in range(self.test_val.shape[1]) :
 				error = 0.5*sp.sum(LA.norm(self.test_val[:,i]-self.data.test_cat[:,i])**2)
-				#print self.test_classif[i], self.data.test_cat[:,i].argmax() 
 				if self.test_classif[i] != self.data.test_cat[:,i].argmax() :
 					if error > maxerr :
 						maxerr = error
