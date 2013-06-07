@@ -8,43 +8,50 @@ class LogisticLinearClassifier:
 		self.mu = mu
 		self.data = data
 		self.w = sp.random.normal(0, 1.0/sp.sqrt(2*dimension+1), ((2*dimension+1),k))
+		self.k = k
 
-	def train(self):
+	def train(self, NB_EPOCH):
 
 		"""
 			Minimize sigma(yi) - ti
 		"""
 
-		delta_w_old = 0
+		
 
 		x = sp.vstack([self.data.train_left,self.data.train_right, sp.ones(self.data.train_left.shape[1])]).T
+		delta_w_old = sp.zeros(x.shape[1])
+		
 
-
-		NB_EPOCH = 150
-		err = sp.zeros(NB_EPOCH)
-		miss = sp.zeros(NB_EPOCH)
+		err_train = sp.zeros(NB_EPOCH)
+		miss_train = sp.zeros(NB_EPOCH)
+		err_val = sp.zeros(NB_EPOCH)
+		miss_val = sp.zeros(NB_EPOCH)
 
 		for epoch in range(NB_EPOCH):
-			self.data.shuffleData()
+			#self.data.shuffleData()
 			x = sp.vstack([self.data.train_left,self.data.train_right, sp.ones(self.data.train_left.shape[1])]).T
 			delta_w_old = self.descent(x, self.data.train_cat, delta_w_old)
-
+			
 			res, classes = self.classify(self.data.val_left, self.data.val_right)
 			error, misclassified = self.error(res.T, self.data.val_cat)
 
-			err[epoch] = error
-			miss[epoch] = misclassified
+			err_val[epoch] = error/(self.data.val_left.shape[1]*1.0)
+			miss_val[epoch] = misclassified/(self.data.val_left.shape[1]*1.0)
 
-			print epoch, "Logistic error:", error/self.data.train_left.shape[1], "misclassified:", misclassified
+			print epoch, "Logistic error:", error/self.data.val_left.shape[1], "misclassified:", misclassified
+			res, _ = self.classify(self.data.train_left, self.data.train_right)
+			err, miss = self.error(res.T, self.data.train_cat)
+			err_train[epoch] = err/(self.data.train_left.shape[1]*1.0)
+			miss_train[epoch] = miss/(self.data.train_left.shape[1]*1.0)
+
+			if epoch > 1:
+				if err_val[epoch] > err_val[epoch-1]:
+					print "overfitting"
+					break
 		
-		fig = plt.figure()
-		ax = fig.add_subplot(111)
-		ax.plot(err, label='logistic error')
-		fig2 = plt.figure()
-		ax2 = fig2.add_subplot(111)
-		ax2.plot(miss, label='misclassified')
+		
 
-		plt.show()
+		return err_train, miss_train, err_val, miss_val
 
 
 	def classify(self, xL, xR):
@@ -57,18 +64,10 @@ class LogisticLinearClassifier:
 
 	def error(self, results, expected):	
 		
-		#err = sp.sum(sp.tile(sp.array([self.lsexp(results)]).T,5).T-(expected*results))
 		err = 0
 		for i in range(results.shape[1]):
 
-			if i == -1:
-				print sp.misc.logsumexp(results[:,i]).shape
-				print expected[:,i].shape
-				print results[:,i].shape
-				print sp.dot(expected[:,i],results[:,i]).shape
-
-			err += sp.misc.logsumexp(results[:,i]) - sp.dot(expected[:,i],results[:,i])
-
+			err += self.lsexp(results[:,i]) - sp.dot(expected[:,i],results[:,i])
 
 		misclassified = sp.sum(sp.argmax(results,axis=0) != sp.argmax(expected, axis=0))
 
@@ -79,23 +78,23 @@ class LogisticLinearClassifier:
 		return error/size
 
 	def lsexp(self, array):
-		# <=> sp.log(sp.sum(sp.exp(array)))
 		return sp.log(sp.sum(sp.exp(array), 0))
-		#return sp.misc.logsumexp(array)
+		
 
-	def gradients(self):
-		pass
 
 	def descent(self, x, cat, delta_w_old):
 		for i in range(x.shape[1]):
 
 			x_ = sp.array([x[i,:]])
 			cat_ = sp.array([cat[:,i]]).T
+			
+			y = sp.dot(self.w.T, x_.T)
+			sigma = sp.exp(y - self.lsexp(y))
+			
+			gradients = sp.dot((sigma - cat_), x_)
 
-			sigma = 1 / (1 + sp.exp(-sp.dot(self.w.T, x_.T)))
-
-			gradients = sp.dot((sigma - cat_) , x_)
 			self.w, delta_w_old = self.updateW(self.w, gradients, delta_w_old)
+		
 
 		return delta_w_old
 
@@ -105,8 +104,4 @@ class LogisticLinearClassifier:
 
 		w_new = w_old + delta_w_new.T
 
-		
-
 		return w_new, delta_w_new
-
-
