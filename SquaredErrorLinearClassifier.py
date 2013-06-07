@@ -1,5 +1,7 @@
 import scipy as sp
 import scipy.linalg as LA
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 class SquaredErrorLinearClassifier:
 
@@ -54,5 +56,14 @@ class SquaredErrorLinearClassifier:
 
 		return error/size
 
+	def confusion_matrix(self, result, expected) :
+			confusion_matrix = sp.zeros((self.k, self.k))
+			for i in range(result.shape[0]) :
+				confusion_matrix[result[i]][expected[i]] += 1
+			print confusion_matrix
+
+			conf = plt.figure()
+			ax = conf.add_subplot(111)
+			ax.imshow(confusion_matrix, cmap=cm.get_cmap(name='gray_r'), interpolation='nearest')
 
 
