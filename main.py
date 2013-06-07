@@ -12,17 +12,15 @@ from error import Error
 
 def main():
 	#Binary MLP
-	#testBinary()
+	testBinary()
 	#Multi-Way MLP
-	#testMultiWay()
+	testMultiWay()
 
 	#Squared error linear classifier
-	#testSquaredError()
+	testSquaredError()
 
 	#Logistic error linear classifier
 	testLogisticError()
-
-	#findMuNuLinearClassifier() 
 
 	plt.show()
 
