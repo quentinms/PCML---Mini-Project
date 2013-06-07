@@ -8,6 +8,8 @@ import matplotlib.cm as cm
 from threading import Thread
 from train_validate import TrainerValidator
 from SquaredErrorLinearClassifier import SquaredErrorLinearClassifier
+from LogisticLinearClassifier import LogisticLinearClassifier
+
 
 class ModelEvaluation :
 
@@ -26,6 +28,37 @@ class ModelEvaluation :
 		for i in nu :
 			t = Thread(target=self.createMLPsP, args=(H1, H2, i, batchsize, k))
 			t.start()
+
+	def findNuMuLinearClass(self, batchsize, k):
+
+		k=5
+
+		data = Data(k, 0, 0)
+		data.importDataFromMat()
+		data.normalize()
+
+		error_fig = plt.figure()
+		ax1 = error_fig.add_subplot(111)
+
+		for nu in [0.05, 0.1] :
+			for mu in [0.05, 0.1] :
+				lg = LogisticLinearClassifier(nu, mu, 576, k, data)
+				err_train, miss_train, err_val, miss_val = lg.train(30)
+				label1 = "validation error mu="+str(mu)+" nu="+str(nu)
+				label2 = "training error mu="+str(mu)+" nu="+str(nu)
+				ax1.plot(err_train, label=label1)
+				ax1.plot(err_val, label=label2)
+		
+		
+		ax1.set_ylabel('error')
+		ax1.set_xlabel('epoch')
+
+		title = "Validation and training errors"
+		error_fig.suptitle(title)
+
+		plt.legend()
+
+
 
 	def createMLPsH(self, H1, nu, mu, batchsize, k):
 		

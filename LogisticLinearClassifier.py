@@ -1,5 +1,6 @@
 import scipy as sp
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 class LogisticLinearClassifier:
 
@@ -43,11 +44,12 @@ class LogisticLinearClassifier:
 			err, miss = self.error(res.T, self.data.train_cat)
 			err_train[epoch] = err/(self.data.train_left.shape[1]*1.0)
 			miss_train[epoch] = miss/(self.data.train_left.shape[1]*1.0)
-
+			"""
 			if epoch > 1:
 				if err_val[epoch] > err_val[epoch-1]:
 					print "overfitting"
 					break
+			"""
 		
 		
 
@@ -105,3 +107,13 @@ class LogisticLinearClassifier:
 		w_new = w_old + delta_w_new.T
 
 		return w_new, delta_w_new
+
+	def confusion_matrix(self, result, expected) :
+		confusion_matrix = sp.zeros((self.k, self.k))
+		for i in range(result.shape[0]) :
+			confusion_matrix[result[i]][expected[i]] += 1
+		print confusion_matrix
+
+		conf = plt.figure()
+		ax = conf.add_subplot(111)
+		ax.imshow(confusion_matrix, cmap=cm.get_cmap(name='gray_r'), interpolation='nearest')

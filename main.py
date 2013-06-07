@@ -3,6 +3,7 @@ from data import Data
 from model_evaluation import ModelEvaluation
 from test import Test
 from SquaredErrorLinearClassifier import SquaredErrorLinearClassifier
+from LogisticLinearClassifier import LogisticLinearClassifier
 import matplotlib.pyplot as plt
 import scipy as sp
 from error import Error
@@ -11,12 +12,17 @@ from error import Error
 
 def main():
 	#Binary MLP
-	testBinary()
+	#testBinary()
 	#Multi-Way MLP
-	testMultiWay()
+	#testMultiWay()
 
 	#Squared error linear classifier
 	#testSquaredError()
+
+	#Logistic error linear classifier
+	testLogisticError()
+
+	#findMuNuLinearClassifier() 
 
 	plt.show()
 
@@ -70,12 +76,55 @@ def testSquaredError() :
 	print "Error on the test set "+str(err)
 	print "Misclassification ratio on the test set "+str(misclass)
 
+def testLogisticError() :
+	k=5
+
+	data = Data(k, 0, 0)
+	data.importDataFromMat()
+	data.normalize()
+
+	lg = LogisticLinearClassifier(0.03, 0.03, 576, k, data)
+	err_train, miss_train, err_val, miss_val = lg.train(30)
+	mis_fig = plt.figure()
+	ax2 = mis_fig.add_subplot(111)
+	ax2.plot(err_val, label='error (validation)')
+	ax2.plot(err_train, label='error (training)')
+	title = "std(val)=%f std(err)=%f" % (sp.std(err_val), sp.std(err_train) )
+	mis_fig.suptitle(title)
+	ax2.set_ylabel('error')
+	ax2.set_xlabel('epoch')
+	plt.legend()
+
+	mis_fig = plt.figure()
+	ax2 = mis_fig.add_subplot(111)
+	ax2.plot(miss_val, label='misclassification ratio (validation)')
+	ax2.plot(miss_train, label='misclassification ratio (training)')
+	mis_fig.suptitle(title)
+	ax2.set_ylabel('misclassification ratio')
+	ax2.set_xlabel('epoch')
+	plt.legend()
+
+	results, cat = lg.classify(data.test_left, data.test_right)
+	lg.confusion_matrix(cat, data.test_cat.argmax(axis=0))
+
+	err = Error()
+	err, misclass = err.norm_total_error(results.T, data.test_cat, k)
+	print "Error on the test set "+str(err)
+	print "Misclassification ratio on the test set "+str(misclass)
+
 def findMuNu() :
 
 	k=5
 
 	evalModel = ModelEvaluation()
 	evalModel.findNuMu(80, 60, 1, k)
+
+def findMuNuLinearClassifier() :
+
+	k=5
+
+	evalModel = ModelEvaluation()
+	evalModel.findNuMuLinearClass(1, k)
 
 def findH1H2() :
 
