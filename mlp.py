@@ -170,4 +170,4 @@ class MLP:
 		print "Gradient = "+str(expected_gradient)
 
 
-		print "Difference "+str(approx_grad-grad)
+		print "Difference "+str(approx_grad-expected_gradient)
